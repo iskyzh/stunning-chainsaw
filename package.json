@@ -5,6 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.6.1",
+    "debug": "^3.1.0",
     "iconv": "^2.3.0",
     "iconv-lite": "^0.4.23",
     "is-alphanumeric": "^1.0.0",

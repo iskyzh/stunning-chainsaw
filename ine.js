@@ -5,6 +5,8 @@ const moment = require('moment')
 const parseString = require('xml2js').parseString
 const mongoose = require('mongoose')
 const query = require('./query')
+const isAlphanumeric = require('is-alphanumeric')
+const debug = require('debug')('ctp:ine')
 
 mongoose.connect('mongodb://localhost/futures')
 
@@ -45,18 +47,18 @@ query((date, cb) => {
       return
     }
     if (res.statusCode != 200) {
-      console.log(`${date.format('YYYYMMDD')} no data`)
+      debug(`${date.format('YYYYMMDD')} no data`)
     } else {
-      console.log(`${date.format('YYYYMMDD')} complete`)
+      debug(`${date.format('YYYYMMDD')} complete`)
       DATE = `${body.o_year}${body.o_month}${body.o_day}`
       c = _.chain(body.o_curinstrument)
-        .filter(record => record.HIGHESTPRICE != "")
         .map(record => _.mapValues(record, key => _.trim(key)))
+        .filter(record => isAlphanumeric(record.DELIVERYMONTH) && _.size(record.DELIVERYMONTH) > 1)
         .value()
         .forEach(v => {
           const instance = new Ine(_.merge(v, { DATE }))
           instance.save((err) => {
-            if(err) console.log(err)
+            if(err) debug(err)
           })
         })
     }

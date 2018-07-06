@@ -2,6 +2,7 @@
 const _ = require('lodash')
 const moment = require('moment')
 const async = require('async')
+const debug = require('debug')('ctp:query')
 
 current_date = moment(Date.now())
 
@@ -13,10 +14,10 @@ module.exports = (fn, preprocess) => {
       fn(date, err => {
         if (!err) {
           count++
-          console.log(`${date.format('YYYYMMDD')} retrived | Speed: ${count / (Date.now() - __start) * 1000 * 60} / min`)
+          debug(`${date.format('YYYYMMDD')} retrived | Speed: ${count / (Date.now() - __start) * 1000 * 60} / min`)
           setTimeout(() => q.push(moment(date).subtract(5, 'day')), 500)
         } else {
-          console.log(`${date.format('YYYYMMDD')} failed, retrying...`)
+          debug(`${date.format('YYYYMMDD')} failed, retrying...`)
           setTimeout(() => q.push(moment(date)), 500)
         }
         callback()

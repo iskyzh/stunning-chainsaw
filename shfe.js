@@ -4,6 +4,9 @@ const _ = require('lodash')
 const moment = require('moment')
 const parseString = require('xml2js').parseString
 const mongoose = require('mongoose')
+const query = require('./query')
+const isAlphanumeric = require('is-alphanumeric')
+const debug = require('debug')('ctp:shfe')
 
 mongoose.connect('mongodb://localhost/futures')
 
@@ -33,37 +36,33 @@ const Shfe = mongoose.model('Shfe', new Schema({
   DATE: String
 }))
 
-const do_request = () => {
-  date = moment(__current_date)
-  __current_date.subtract(1,'day')
+query((date, cb) => {
   request({
     url: `http://www.shfe.com.cn/data/dailydata/kx/kx${date.format('YYYYMMDD')}.dat`,
     encoding: 'utf-8',
     json: true
   }, (err, res, body) => {
     if (err) {
-      __current_date.add(1,'day')
-      setTimeout(do_request, 200)
+      cb(true)
       return
     }
     if (res.statusCode != 200) {
-      console.log(`${date.format('YYYYMMDD')} error`)
+      debug(`${date.format('YYYYMMDD')} no data`)
     } else {
-      console.log(`${date.format('YYYYMMDD')} complete`)
       DATE = `${body.o_year}${body.o_month}${body.o_day}`
       c = _.chain(body.o_curinstrument)
-        .filter(record => record.HIGHESTPRICE != "")
         .map(record => _.mapValues(record, key => _.trim(key)))
+        .filter(record => isAlphanumeric(record.DELIVERYMONTH) && _.size(record.DELIVERYMONTH) > 1)
         .value()
-        .forEach(v => {
-          const instance = new Shfe(_.merge(v, { DATE }))
-          instance.save((err) => {
-            if(err) console.log(err)
-          })
-        })
-    }
-    setTimeout(do_request, 200)
-  })
-}
 
-do_request()
+      c.forEach(v => {
+        const instance = new Shfe(_.merge(v, { DATE }))
+        instance.save((err) => {
+          if(err) debug(err)
+        })
+      })
+      debug(`${date.format('YYYYMMDD')} ${_.size(c)} entries`)
+    }
+    cb(null)
+  })
+}, date => date.subtract(1, 'day'))

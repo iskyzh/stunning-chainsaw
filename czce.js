@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const iconv = require('iconv-lite')
 const query = require('./query')
 const isAlphanumeric = require('is-alphanumeric')
+const debug = require('debug')('ctp:czce')
 
 mongoose.connect('mongodb://localhost/futures')
 
@@ -56,7 +57,7 @@ query((date, cb) => {
       return
     }
     if (response.statusCode != 200) {
-      console.log(`${date.format('YYYY-MM-DD')} no data`)
+      debug(`${date.format('YYYY-MM-DD')} no data`)
     } else {
       body = iconv.decode(body, 'gb2312')
       __date = date.format('YYMMDD')
@@ -86,7 +87,7 @@ query((date, cb) => {
           })
           instance.date = __date
           instance.save((err) => {
-            if(err) console.log(err)
+            if(err) debug(err)
           })
         })
     }

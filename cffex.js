@@ -5,6 +5,7 @@ const moment = require('moment')
 const parseString = require('xml2js').parseString
 const mongoose = require('mongoose')
 const query = require('./query')
+const debug = require('debug')('ctp:cffex')
 
 mongoose.connect('mongodb://localhost/futures')
 
@@ -46,11 +47,11 @@ query((date, cb) => {
           .forEach(v => {
             const instance = new Cffex(v)
             instance.save((err) => {
-              if(err) console.log(err)
+              if(err) debug(err)
             })
           })
       } else {
-        console.log(`${date.format('YYYY-MM-DD')} no data`)
+        debug(`${date.format('YYYY-MM-DD')} no data`)
       }
     })
     cb(null)
