@@ -1,0 +1,19 @@
+{
+  "name": "ctp-history",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.1",
+    "iconv": "^2.3.0",
+    "iconv-lite": "^0.4.23",
+    "is-alphanumeric": "^1.0.0",
+    "is-number": "^7.0.0",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "mongodb": "^3.1.0",
+    "mongoose": "^5.2.1",
+    "request": "^2.87.0",
+    "xml2js": "^0.4.19"
+  }
+}
