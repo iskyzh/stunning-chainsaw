@@ -89,4 +89,4 @@ query((date, cb) => {
       })
     cb(null)
   })
-}, date => date.subtract(1, 'day'))
+})

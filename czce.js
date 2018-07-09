@@ -37,16 +37,16 @@ const Czce = mongoose.model('Czce', new Schema({
   highestprice: Number,
   lowestprice: Number,
   closeprice: Number,
+  settlementprice: Number, //结算价
   zd1: Number,
   zd2: Number,
   volume: Number, //成交量
   openinterest: Number, //空盘量
   delta: Number, //增减量
   turnover: Number, //成交额
-  settlementprice: Number, //交割结算价
+  finalsettlementprice: Number, //交割结算价
   date: String
 }))
-
 query((date, cb) => {
   request({
     url: `http://www.czce.com.cn/portal/DFSStaticFiles/Future/${date.format('YYYY/YYYYMMDD')}/FutureDataDaily.txt`,
@@ -75,13 +75,14 @@ query((date, cb) => {
             'highestprice',
             'lowestprice',
             'closeprice',
+            'settlementprice',
             'zd1',
             'zd2',
             'volume',
             'openinterest',
             'delta',
             'turnover',
-            'settlementprice'
+            'finalsettlementprice'
           ], (key, index) => {
             instance[key] = v[index]
           })
