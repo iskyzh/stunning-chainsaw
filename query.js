@@ -4,7 +4,7 @@ const moment = require('moment')
 const async = require('async')
 const debug = require('debug')('ctp:query')
 
-current_date = moment([2018, 6, 5])
+current_date = moment('2018-07-05')
 
 __start = Date.now()
 count = 0
